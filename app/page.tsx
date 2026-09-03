@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import CoverGate from '@/components/cover/CoverGate';
+import CoverGate from '../src/components/cover/CoverGate';
+import WelcomeQuote from '../src/components/sections/WelcomeQuote';
 
 export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Kunci Scroll Layar sebelum cover dibuka
+  // Kunci scroll body saat cover belum dibuka
   useEffect(() => {
     if (!isOpen) {
       document.documentElement.style.overflow = 'hidden';
@@ -25,17 +26,18 @@ export default function Home() {
     };
   }, [isOpen]);
 
-  const handleOpenInvitation = () => {
-    setIsOpen(true);
-  };
-
   return (
     <div className="w-full min-h-screen flex justify-center bg-[#050811] select-none relative">
       <main className="w-full max-w-md bg-[#080d1a] relative border-x border-amber-400/20 shadow-[0_0_80px_rgba(6,182,212,0.15)] min-h-screen">
-        {/* FASE 1: COVER GATE */}
-        <CoverGate isOpen={isOpen} onOpen={handleOpenInvitation} />
+        {/* FASE 1: COVER GATE (DENGAN EFEK LASER TEAR) */}
+        <CoverGate isOpen={isOpen} onOpen={() => setIsOpen(true)} />
 
-        {/* Placeholder untuk komponen modul Fase berikutnya */}
+        {/* FASE 2: KONTEN DI BALIK COVER */}
+        {isOpen && (
+          <div className="w-full pb-16">
+            <WelcomeQuote />
+          </div>
+        )}
       </main>
     </div>
   );
