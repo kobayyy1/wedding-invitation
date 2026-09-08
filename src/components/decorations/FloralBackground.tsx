@@ -48,16 +48,15 @@ export default function FloralBackground({ isRevealing = false }: FloralBackgrou
     resize();
     window.addEventListener('resize', resize);
 
-    // Palet Elegan: Hanya Emas Champagne, Safir Porselen, dan Mutiara (Tanpa Pink/Permen)
+    // Palet Partikel Latar: Emas Murni, Champagne, Ruby, & Bintang Putih
     const luxuryPalette = [
-      '#DFC384', // Champagne Gold
-      '#C5A059', // Rich Antique Gold
-      '#E6CE97', // Pale Gold
-      '#325E84', // Royal Sapphire
-      '#4F7E9F', // Glazed Ceramic Blue
-      '#84AAC8', // Ice Porcelain Blue
-      '#B0CEE2', // Frosted Pale Blue
-      '#FFFFFF', // Opal Crystal
+      '#FDE68A', // Pale Gold
+      '#F59E0B', // Warm 24K Gold
+      '#D97706', // Antique Gold
+      '#FDA4AF', // Rose Petal
+      '#FB7185', // Soft Ruby
+      '#E11D48', // Deep Ruby Spark
+      '#FFFFFF', // Opal Star
     ];
 
     const drawHeart = (
@@ -78,10 +77,10 @@ export default function FloralBackground({ isRevealing = false }: FloralBackgrou
 
       if (layer === 'foreground') {
         c.shadowColor = color;
-        c.shadowBlur = 10;
+        c.shadowBlur = 12;
       } else if (layer === 'mid') {
         c.shadowColor = color;
-        c.shadowBlur = 4;
+        c.shadowBlur = 6;
       }
 
       c.beginPath();
@@ -91,9 +90,8 @@ export default function FloralBackground({ isRevealing = false }: FloralBackgrou
       c.bezierCurveTo(size * 1.05, -size * 0.05, size * 0.65, -size * 0.95, 0, topCurve);
       c.fill();
 
-      // Kilap kristal halus untuk foreground
       if (layer === 'foreground') {
-        c.fillStyle = 'rgba(255, 255, 255, 0.45)';
+        c.fillStyle = 'rgba(255, 255, 255, 0.5)';
         c.beginPath();
         c.arc(-size * 0.22, -size * 0.22, size * 0.16, 0, Math.PI * 2);
         c.fill();
@@ -108,7 +106,7 @@ export default function FloralBackground({ isRevealing = false }: FloralBackgrou
     for (let i = 0; i < TOTAL_HEARTS; i++) {
       const rand = Math.random();
       let layer: 'bokeh' | 'mid' | 'foreground' = 'mid';
-      let size = Math.random() * 8 + 12; // 12-20px
+      let size = Math.random() * 8 + 12;
       let alpha = Math.random() * 0.3 + 0.4;
       let speed = Math.random() * 0.5 + 0.45;
 
@@ -119,7 +117,7 @@ export default function FloralBackground({ isRevealing = false }: FloralBackgrou
         speed = Math.random() * 0.35 + 0.3;
       } else if (rand > 0.8) {
         layer = 'foreground';
-        size = Math.random() * 10 + 20; // 20-30px
+        size = Math.random() * 10 + 20;
         alpha = Math.random() * 0.25 + 0.65;
         speed = Math.random() * 0.6 + 0.75;
       }
@@ -198,44 +196,43 @@ export default function FloralBackground({ isRevealing = false }: FloralBackgrou
       <svg className="absolute w-0 h-0">
         <defs>
           <linearGradient id="richGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#DFC384" />
-            <stop offset="50%" stopColor="#C5A059" />
-            <stop offset="100%" stopColor="#8C6D2E" />
+            <stop offset="0%" stopColor="#FEF08A" />
+            <stop offset="50%" stopColor="#F59E0B" />
+            <stop offset="100%" stopColor="#B45309" />
           </linearGradient>
           <linearGradient id="sapphireGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#1E4D75" />
-            <stop offset="50%" stopColor="#3B739E" />
-            <stop offset="100%" stopColor="#6C9FCA" />
+            <stop offset="0%" stopColor="#1E3A5F" />
+            <stop offset="50%" stopColor="#11223B" />
+            <stop offset="100%" stopColor="#08101E" />
           </linearGradient>
         </defs>
       </svg>
 
-      {/* 1. TEKSTUR DAMASK ROYAL EMBOSSED */}
-      <div className="absolute inset-0 opacity-[0.045] pointer-events-none">
+      {/* 1. TEKSTUR DAMASK EMAS BERPENDAR HALUS */}
+      <div className="absolute inset-0 opacity-[0.06] pointer-events-none">
         <svg width="100%" height="100%">
           <defs>
             <pattern id="royalDamask" width="60" height="60" patternUnits="userSpaceOnUse">
               <path
                 d="M30 5 C20 15 15 25 15 35 C15 45 25 55 30 55 C35 55 45 45 45 35 C45 25 40 15 30 5 Z M30 18 C35 24 37 30 35 36 C33 42 27 42 25 36 C23 30 25 24 30 18 Z"
                 fill="none"
-                stroke="#1E4D75"
+                stroke="#F59E0B"
                 strokeWidth="1"
               />
-              <circle cx="30" cy="30" r="3" fill="#C5A059" />
-              <path d="M0 30 Q15 25 30 30 Q45 35 60 30" fill="none" stroke="#1E4D75" strokeWidth="0.6" strokeDasharray="2 2" />
+              <circle cx="30" cy="30" r="3" fill="#FDE68A" />
+              <path d="M0 30 Q15 25 30 30 Q45 35 60 30" fill="none" stroke="#F59E0B" strokeWidth="0.6" strokeDasharray="2 2" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#royalDamask)" />
         </svg>
       </div>
 
-      {/* 2. AMBIENT ENGINE: 50+ HATI EMAS & SAFIR MELAYANG TERUS */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none z-10"
       />
 
-      {/* 3. BUKET BUNGA KATEDRAL KANAN ATAS */}
+      {/* 3. BUKET BUNGA KATEDRAL KANAN ATAS (EMAS & NAVY GELAP) */}
       <div className="absolute -top-3 -right-3 w-56 h-56 anim-sway-tr opacity-95 pointer-events-none z-20">
         <svg viewBox="0 0 240 240" fill="none" className="w-full h-full overflow-visible">
           <path
@@ -243,29 +240,29 @@ export default function FloralBackground({ isRevealing = false }: FloralBackgrou
             stroke="url(#richGoldGrad)"
             strokeWidth="2.4"
             strokeLinecap="round"
-            filter="drop-shadow(0 2px 4px rgba(140,109,46,0.25))"
+            filter="drop-shadow(0 2px 6px rgba(245,158,11,0.3))"
           />
-          <path d="M 180 30 Q 130 65 145 105" stroke="#3B739E" strokeWidth="1.6" opacity="0.85" />
+          <path d="M 180 30 Q 130 65 145 105" stroke="#FDE68A" strokeWidth="1.4" opacity="0.85" />
           <path d="M 125 90 Q 75 115 85 160" stroke="url(#richGoldGrad)" strokeWidth="1.5" opacity="0.9" />
 
-          <g filter="drop-shadow(0 2px 6px rgba(30,77,117,0.15))">
-            <path d="M 200 15 C 170 8 150 28 168 48 C 190 52 210 35 200 15 Z" fill="#E2EDF5" stroke="#3B739E" strokeWidth="1.2" />
-            <path d="M 175 22 Q 185 32 195 38" stroke="#C5A059" strokeWidth="1" />
-            <path d="M 155 45 C 125 38 110 65 130 85 C 150 85 168 68 155 45 Z" fill="#D3E5F2" stroke="#1E4D75" strokeWidth="1.2" />
-            <path d="M 115 95 C 85 88 72 118 95 138 C 115 138 130 118 115 95 Z" fill="#E2EDF5" stroke="#3B739E" strokeWidth="1.2" />
+          <g filter="drop-shadow(0 4px 10px rgba(0,0,0,0.5))">
+            <path d="M 200 15 C 170 8 150 28 168 48 C 190 52 210 35 200 15 Z" fill="#14233D" stroke="#F59E0B" strokeWidth="1.2" />
+            <path d="M 175 22 Q 185 32 195 38" stroke="#FDE68A" strokeWidth="1" />
+            <path d="M 155 45 C 125 38 110 65 130 85 C 150 85 168 68 155 45 Z" fill="#0E1A30" stroke="#FDE68A" strokeWidth="1.2" />
+            <path d="M 115 95 C 85 88 72 118 95 138 C 115 138 130 118 115 95 Z" fill="#14233D" stroke="#F59E0B" strokeWidth="1.2" />
           </g>
 
-          <g transform="translate(135, 65) scale(1.15)" filter="drop-shadow(0 4px 10px rgba(30,77,117,0.25))">
-            <circle cx="20" cy="20" r="20" fill="#F4F8FB" stroke="#3B739E" strokeWidth="1.2" />
-            <path d="M 20 0 C 6 10 6 30 20 40 C 34 30 34 10 20 0 Z" fill="#FFFFFF" stroke="#1E4D75" strokeWidth="1.2" />
-            <path d="M 0 20 C 10 6 30 6 40 20 C 30 34 10 34 0 20 Z" fill="#FFFFFF" stroke="#1E4D75" strokeWidth="1.2" />
-            <circle cx="20" cy="20" r="10" fill="#FFFFFF" stroke="#C5A059" strokeWidth="1.2" />
-            <circle cx="20" cy="20" r="4.5" fill="#C5A059" />
+          <g transform="translate(135, 65) scale(1.15)" filter="drop-shadow(0 4px 12px rgba(245,158,11,0.35))">
+            <circle cx="20" cy="20" r="20" fill="#0B1528" stroke="#F59E0B" strokeWidth="1.2" />
+            <path d="M 20 0 C 6 10 6 30 20 40 C 34 30 34 10 20 0 Z" fill="#111E36" stroke="#FDE68A" strokeWidth="1.2" />
+            <path d="M 0 20 C 10 6 30 6 40 20 C 30 34 10 34 0 20 Z" fill="#111E36" stroke="#FDE68A" strokeWidth="1.2" />
+            <circle cx="20" cy="20" r="10" fill="#08101E" stroke="#F59E0B" strokeWidth="1.2" />
+            <circle cx="20" cy="20" r="4.5" fill="#F59E0B" />
           </g>
 
           <g transform="translate(80, 140) scale(0.85)">
-            <circle cx="15" cy="15" r="12" fill="#F4F8FB" stroke="#C5A059" strokeWidth="1.2" />
-            <circle cx="15" cy="15" r="5" fill="#1E4D75" />
+            <circle cx="15" cy="15" r="12" fill="#0B1528" stroke="#F59E0B" strokeWidth="1.2" />
+            <circle cx="15" cy="15" r="5" fill="#FDE68A" />
           </g>
         </svg>
       </div>
@@ -278,20 +275,20 @@ export default function FloralBackground({ isRevealing = false }: FloralBackgrou
             stroke="url(#richGoldGrad)"
             strokeWidth="2.4"
             strokeLinecap="round"
-            filter="drop-shadow(0 2px 4px rgba(140,109,46,0.25))"
+            filter="drop-shadow(0 2px 6px rgba(245,158,11,0.3))"
           />
-          <path d="M 60 210 Q 110 175 95 135" stroke="#3B739E" strokeWidth="1.6" opacity="0.85" />
+          <path d="M 60 210 Q 110 175 95 135" stroke="#FDE68A" strokeWidth="1.4" opacity="0.85" />
 
-          <g filter="drop-shadow(0 2px 6px rgba(30,77,117,0.15))">
-            <path d="M 40 225 C 70 232 90 212 72 192 C 50 188 30 205 40 225 Z" fill="#E2EDF5" stroke="#3B739E" strokeWidth="1.2" />
-            <path d="M 85 195 C 115 202 130 175 110 155 C 90 155 72 172 85 195 Z" fill="#D3E5F2" stroke="#1E4D75" strokeWidth="1.2" />
+          <g filter="drop-shadow(0 4px 10px rgba(0,0,0,0.5))">
+            <path d="M 40 225 C 70 232 90 212 72 192 C 50 188 30 205 40 225 Z" fill="#14233D" stroke="#F59E0B" strokeWidth="1.2" />
+            <path d="M 85 195 C 115 202 130 175 110 155 C 90 155 72 172 85 195 Z" fill="#0E1A30" stroke="#FDE68A" strokeWidth="1.2" />
           </g>
 
-          <g transform="translate(65, 135) scale(1.15)" filter="drop-shadow(0 4px 10px rgba(30,77,117,0.25))">
-            <circle cx="20" cy="20" r="19" fill="#F4F8FB" stroke="#3B739E" strokeWidth="1.2" />
-            <path d="M 20 1 C 7 11 7 29 20 39 C 33 29 33 11 20 1 Z" fill="#FFFFFF" stroke="#1E4D75" strokeWidth="1.2" />
-            <circle cx="20" cy="20" r="9" fill="#FFFFFF" stroke="#C5A059" strokeWidth="1.2" />
-            <circle cx="20" cy="20" r="4" fill="#C5A059" />
+          <g transform="translate(65, 135) scale(1.15)" filter="drop-shadow(0 4px 12px rgba(245,158,11,0.35))">
+            <circle cx="20" cy="20" r="19" fill="#0B1528" stroke="#F59E0B" strokeWidth="1.2" />
+            <path d="M 20 1 C 7 11 7 29 20 39 C 33 29 33 11 20 1 Z" fill="#111E36" stroke="#FDE68A" strokeWidth="1.2" />
+            <circle cx="20" cy="20" r="9" fill="#08101E" stroke="#F59E0B" strokeWidth="1.2" />
+            <circle cx="20" cy="20" r="4" fill="#FDE68A" />
           </g>
         </svg>
       </div>

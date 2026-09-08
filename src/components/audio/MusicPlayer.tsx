@@ -8,9 +8,10 @@ export default function MusicPlayer() {
   const [hasStarted, setHasStarted] = useState(false);
   const fadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fadeInAudio = (audio: HTMLAudioElement) => {
+  const startFadeIn = (audio: HTMLAudioElement) => {
     audio.volume = 0;
     const playPromise = audio.play();
+
     if (playPromise !== undefined) {
       playPromise
         .then(() => {
@@ -26,10 +27,9 @@ export default function MusicPlayer() {
             }
           }, 120);
         })
-        .catch((err) => {
-          console.warn('Audio play blocked:', err);
+        .catch(() => {
           const unlock = () => {
-            fadeInAudio(audio);
+            audio.play().then(() => setIsPlaying(true)).catch(() => {});
             window.removeEventListener('pointerdown', unlock);
             window.removeEventListener('touchstart', unlock);
           };
@@ -40,16 +40,38 @@ export default function MusicPlayer() {
   };
 
   useEffect(() => {
-    const handleStartMusic = () => {
+    const isAlreadyStarted = sessionStorage.getItem('wedding_music_active') === 'true';
+
+    if (isAlreadyStarted) {
       setHasStarted(true);
       if (audioRef.current) {
-        fadeInAudio(audioRef.current);
+        audioRef.current.play()
+          .then(() => setIsPlaying(true))
+          .catch(() => {
+            const resumeOnTap = () => {
+              audioRef.current?.play();
+              setIsPlaying(true);
+              window.removeEventListener('click', resumeOnTap);
+              window.removeEventListener('touchstart', resumeOnTap);
+            };
+            window.addEventListener('click', resumeOnTap, { once: true });
+            window.addEventListener('touchstart', resumeOnTap, { once: true });
+          });
+      }
+    }
+
+    const handleStartEvent = () => {
+      sessionStorage.setItem('wedding_music_active', 'true');
+      setHasStarted(true);
+      if (audioRef.current) {
+        startFadeIn(audioRef.current);
       }
     };
 
-    window.addEventListener('play-wedding-music', handleStartMusic);
+    window.addEventListener('play-wedding-music', handleStartEvent);
+
     return () => {
-      window.removeEventListener('play-wedding-music', handleStartMusic);
+      window.removeEventListener('play-wedding-music', handleStartEvent);
       if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
     };
   }, []);
@@ -57,42 +79,44 @@ export default function MusicPlayer() {
   const toggleMusic = () => {
     const audio = audioRef.current;
     if (!audio) return;
+
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
     } else {
-      audio.play();
-      setIsPlaying(true);
+      audio.play().then(() => setIsPlaying(true)).catch(() => {});
     }
   };
 
   return (
     <>
-      <audio ref={audioRef} src="/audio/wedding.mp3" loop preload="auto" />
+      <audio
+        ref={audioRef}
+        src="/audio/wedding.mp3"
+        loop
+        preload="auto"
+      />
 
-      {/* Tombol Vinyl Baru Muncul Setelah Undangan Dibuka */}
       {hasStarted && (
         <div className="fixed bottom-6 right-6 z-50 animate-in fade-in zoom-in-75 duration-700">
           <button
             type="button"
             onClick={toggleMusic}
             aria-label={isPlaying ? 'Pause Music' : 'Play Music'}
-            className={`relative w-12 h-12 rounded-full border border-amber-400/50 bg-[#081224]/90 backdrop-blur-md shadow-[0_0_20px_rgba(251,191,36,0.3)] flex items-center justify-center p-1.5 transition-transform active:scale-90 cursor-pointer ${
+            className={`relative w-12 h-12 rounded-full border border-amber-400/60 bg-[#081224]/90 backdrop-blur-md shadow-[0_0_20px_rgba(251,191,36,0.35)] flex items-center justify-center p-1.5 transition-transform active:scale-90 cursor-pointer ${
               isPlaying ? 'animate-[spin_4s_linear_infinite]' : ''
             }`}
           >
-            {/* Efek Piringan Hitam Vinyl Hologram */}
-            <div className="w-full h-full rounded-full border border-dashed border-cyan-300/40 flex items-center justify-center bg-radial from-amber-500/10 via-transparent to-black/60">
+            <div className="w-full h-full rounded-full border border-dashed border-amber-300/40 flex items-center justify-center bg-radial from-amber-500/15 via-transparent to-black/70">
               <div className="w-3.5 h-3.5 rounded-full bg-amber-300/90 shadow-[0_0_8px_#fbbf24] flex items-center justify-center">
                 <div className="w-1 h-1 rounded-full bg-black" />
               </div>
             </div>
 
-            {/* Soundwave Bars Indicator */}
             {isPlaying && (
               <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500" />
               </span>
             )}
           </button>

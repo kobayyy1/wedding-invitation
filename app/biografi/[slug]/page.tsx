@@ -79,15 +79,15 @@ function CardFloralCorner({ className = '' }: { className?: string }) {
     <svg viewBox="0 0 75 75" fill="none" className={`w-12 h-12 pointer-events-none ${className}`}>
       <path
         d="M 4 4 L 36 4 C 36 4 30 18 18 18 C 18 30 4 36 4 36 Z"
-        stroke="#C5A059"
+        stroke="#F59E0B"
         strokeWidth="1.4"
-        fill="rgba(197,160,89,0.12)"
+        fill="rgba(245,158,11,0.12)"
       />
-      <path d="M 8 8 Q 24 8 24 24" stroke="#DFC384" strokeWidth="1" strokeDasharray="2 2" />
-      <path d="M 12 12 C 22 6 30 12 26 22 C 16 26 8 20 12 12 Z" fill="#E2EDF5" stroke="#3B739E" strokeWidth="1" />
+      <path d="M 8 8 Q 24 8 24 24" stroke="#FDE68A" strokeWidth="1" strokeDasharray="2 2" />
+      <path d="M 12 12 C 22 6 30 12 26 22 C 16 26 8 20 12 12 Z" fill="#111E36" stroke="#F59E0B" strokeWidth="1" />
       <g transform="translate(6, 6) scale(0.65)">
-        <circle cx="16" cy="16" r="14" fill="#FFFFFF" stroke="#3B739E" strokeWidth="1.2" />
-        <circle cx="16" cy="16" r="4.5" fill="#C5A059" />
+        <circle cx="16" cy="16" r="14" fill="#08101E" stroke="#F59E0B" strokeWidth="1.2" />
+        <circle cx="16" cy="16" r="4.5" fill="#FDE68A" />
       </g>
     </svg>
   );
@@ -96,13 +96,13 @@ function CardFloralCorner({ className = '' }: { className?: string }) {
 function BotanicalWreath() {
   return (
     <div className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none animate-[spin_40s_linear_infinite]">
-      <svg viewBox="0 0 160 160" fill="none" className="w-full h-full opacity-70">
-        <circle cx="80" cy="80" r="66" stroke="#C5A059" strokeWidth="1.2" strokeDasharray="6 3" />
-        <circle cx="80" cy="80" r="72" stroke="#3B739E" strokeWidth="0.8" opacity="0.6" />
+      <svg viewBox="0 0 160 160" fill="none" className="w-full h-full opacity-80">
+        <circle cx="80" cy="80" r="66" stroke="#F59E0B" strokeWidth="1.3" strokeDasharray="6 3" />
+        <circle cx="80" cy="80" r="72" stroke="#FDE68A" strokeWidth="0.8" opacity="0.6" />
         {[0, 60, 120, 180, 240, 300].map((deg) => (
           <g key={deg} transform={`rotate(${deg} 80 80)`}>
-            <circle cx="80" cy="10" r="4" fill="#FFFFFF" stroke="#1E4D75" strokeWidth="1" />
-            <circle cx="80" cy="10" r="2" fill="#C5A059" />
+            <circle cx="80" cy="10" r="4" fill="#08101E" stroke="#F59E0B" strokeWidth="1" />
+            <circle cx="80" cy="10" r="2" fill="#FDE68A" />
           </g>
         ))}
       </svg>
@@ -116,22 +116,25 @@ export default function BiografiPage() {
   const person = BIOGRAPHY_PROFILES[slug] || BIOGRAPHY_PROFILES.silvia;
 
   return (
-    <div className="w-full min-h-screen flex justify-center bg-[#CBDCE8] select-none relative font-sans antialiased">
-      <main className="w-full max-w-md bg-gradient-to-b from-[#F3F8FC] via-[#E8F2F9] to-[#DCEAF4] relative border-x-2 border-[#C5A059]/40 shadow-[0_0_70px_rgba(19,58,94,0.2)] min-h-screen text-[#091D34] pb-12">
-        <header className="sticky top-0 z-30 bg-[#F3F8FC]/90 backdrop-blur-md border-b border-[#C5A059]/30 px-5 py-3 flex items-center justify-between">
+    <div className="w-full min-h-screen flex justify-center bg-[#02050B] select-none relative font-sans antialiased">
+      <main className="w-full max-w-md bg-gradient-to-b from-[#0B1528] via-[#070D19] to-[#03060E] relative border-x border-[#F59E0B]/30 shadow-[0_0_80px_rgba(0,0,0,0.95)] min-h-screen text-gray-200 pb-12">
+        {/* HEADER DENGAN TEMA MIDNIGHT GOLD */}
+        <header className="sticky top-0 z-30 bg-[#070D19]/90 backdrop-blur-md border-b border-[#F59E0B]/30 px-5 py-3 flex items-center justify-between">
           <Link
             href="/?opened=true"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#C5A059] bg-[#143B5E] text-white text-[10.5px] font-mono tracking-wider uppercase font-bold hover:bg-[#0E2C48] active:scale-95 transition-all shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#F59E0B] bg-[#111C33] text-white text-[10.5px] font-mono tracking-wider uppercase font-bold hover:bg-[#1A2E4E] active:scale-95 transition-all shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
           >
-            <span>← Kembali ke Undangan</span>
+            <span className="text-[#FDE68A]">←</span>
+            <span>Kembali ke Undangan</span>
           </Link>
-          <span className="text-[10px] font-mono tracking-[0.25em] text-[#C5A059] uppercase font-extrabold">
+          <span className="text-[10px] font-mono tracking-[0.25em] text-[#FDE68A] uppercase font-extrabold drop-shadow-xs">
             Biografi Resmi
           </span>
         </header>
 
         <div className="px-5 pt-5 space-y-6">
-          <section className="relative rounded-[26px] bg-white border-2 border-[#C5A059]/70 p-6 flex flex-col items-center text-center space-y-4 shadow-[0_12px_32px_rgba(20,55,90,0.1)] overflow-hidden">
+          {/* SECTION 1: PROFIL UTAMA DENGAN BINGKAI EMAS DAN TEKS KONTRAS TINGGI */}
+          <section className="relative rounded-[26px] bg-gradient-to-b from-[#111C33]/95 via-[#0B1528]/98 to-[#050B17] border-2 border-[#F59E0B]/80 p-6 flex flex-col items-center text-center space-y-4 shadow-[0_16px_45px_rgba(0,0,0,0.65)] overflow-hidden">
             <CardFloralCorner className="absolute -top-1 -left-1" />
             <CardFloralCorner className="absolute -top-1 -right-1 scale-x-[-1]" />
             <CardFloralCorner className="absolute -bottom-1 -left-1 scale-y-[-1]" />
@@ -139,7 +142,7 @@ export default function BiografiPage() {
 
             <div className="relative w-32 h-32 flex items-center justify-center mt-1">
               <BotanicalWreath />
-              <div className="w-22 h-22 rounded-full overflow-hidden border-2 border-[#C5A059] p-1 shadow-[0_6px_20px_rgba(30,77,117,0.22)] bg-[#1E4D75]">
+              <div className="w-22 h-22 rounded-full overflow-hidden border-2 border-[#FDE68A] p-1 shadow-[0_0_24px_rgba(245,158,11,0.45)] bg-gradient-to-b from-[#B45309] via-[#92400E] to-[#78350F]">
                 <img
                   src={person.photo}
                   alt={person.fullName}
@@ -149,87 +152,92 @@ export default function BiografiPage() {
             </div>
 
             <div className="space-y-1.5 relative z-10">
-              <span className="text-[9.5px] font-mono tracking-[0.25em] uppercase text-[#C5A059] font-extrabold bg-[#1E4D75] px-4 py-1 rounded-full shadow-xs">
+              <span className="text-[9.5px] font-mono tracking-[0.25em] uppercase text-[#FDE68A] font-extrabold bg-[#162744]/90 border border-[#F59E0B]/50 px-4 py-1 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
                 {person.role}
               </span>
-              <h1 className="text-2xl font-serif text-[#08182B] font-extrabold tracking-wide pt-1">
+              <h1 className="text-2xl font-serif text-white font-extrabold tracking-wide pt-1 drop-shadow-[0_2px_12px_rgba(245,158,11,0.4)]">
                 {person.fullName}
               </h1>
-              <p className="text-xs text-[#24466B] font-medium">
+              <p className="text-xs text-[#94A3B8] font-medium pt-0.5">
                 Putra/i tercinta dari <br />
-                <span className="text-[#08182B] font-bold">{person.parents}</span>
+                <span className="text-[#FDE68A] font-bold">{person.parents}</span>
               </p>
             </div>
 
-            <div className="w-full grid grid-cols-2 gap-2 pt-2 border-t border-[#C5A059]/25 text-left">
-              <div className="p-2.5 rounded-xl bg-[#F4F8FC] border border-[#B3CFE5]/60">
-                <span className="text-[9px] font-mono tracking-wider uppercase text-[#5A7A97] font-bold block">
+            {/* KARTU KECIL INFO (KELAHIRAN & KARYA) */}
+            <div className="w-full grid grid-cols-2 gap-2 pt-2 border-t border-[#F59E0B]/25 text-left">
+              <div className="p-2.5 rounded-xl bg-[#0B1528]/80 border border-[#F59E0B]/30 shadow-inner">
+                <span className="text-[9px] font-mono tracking-wider uppercase text-[#FDE68A]/80 font-bold block">
                   Kelahiran
                 </span>
-                <span className="text-[11px] font-serif text-[#08182B] font-bold block pt-0.5">
+                <span className="text-[11px] font-serif text-white font-bold block pt-0.5">
                   {person.birthDate}
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-[#F4F8FC] border border-[#B3CFE5]/60">
-                <span className="text-[9px] font-mono tracking-wider uppercase text-[#5A7A97] font-bold block">
+              <div className="p-2.5 rounded-xl bg-[#0B1528]/80 border border-[#F59E0B]/30 shadow-inner">
+                <span className="text-[9px] font-mono tracking-wider uppercase text-[#FDE68A]/80 font-bold block">
                   Fokus &amp; Karya
                 </span>
-                <span className="text-[11px] font-serif text-[#08182B] font-bold block pt-0.5 truncate">
+                <span className="text-[11px] font-serif text-white font-bold block pt-0.5 truncate">
                   {person.passionBadge}
                 </span>
               </div>
             </div>
 
-            <div className="w-full p-3.5 rounded-xl bg-gradient-to-r from-[#F8FAFC] via-[#EDF4FA] to-[#F8FAFC] border border-[#C5A059]/40 text-center">
-              <p className="text-[11.5px] text-[#1D3E61] italic font-serif leading-relaxed">
+            {/* BOX KUTIPAN BIOGRAFI */}
+            <div className="w-full p-3.5 rounded-xl bg-gradient-to-r from-[#0E1B33]/80 via-[#142647]/90 to-[#0E1B33]/80 border border-[#F59E0B]/50 text-center shadow-md">
+              <p className="text-[11.5px] text-[#FDE68A] italic font-serif leading-relaxed drop-shadow-xs">
                 &ldquo;{person.quote}&rdquo;
               </p>
             </div>
           </section>
 
-          <section className="rounded-[24px] bg-white border border-[#B3CFE5] p-5.5 space-y-3.5 shadow-sm">
-            <div className="flex items-center gap-2 border-b border-[#C5A059]/40 pb-2">
-              <span className="w-2 h-2 rounded-full bg-[#C5A059]" />
-              <h2 className="text-xs font-mono tracking-[0.2em] text-[#08182B] uppercase font-bold">
+          {/* SECTION 2: RIWAYAT DAN PERJALANAN (TEKS TERANG & TAJAM DI LATAR GELAP) */}
+          <section className="rounded-[24px] bg-[#0B1528]/90 border border-[#F59E0B]/40 p-5.5 space-y-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.5)] backdrop-blur-md">
+            <div className="flex items-center gap-2 border-b border-[#F59E0B]/30 pb-2">
+              <span className="w-2 h-2 rounded-full bg-[#F59E0B] shadow-[0_0_8px_#F59E0B]" />
+              <h2 className="text-xs font-mono tracking-[0.2em] text-[#FDE68A] uppercase font-bold">
                 {person.storyTitle}
               </h2>
             </div>
-            <div className="space-y-3.5 text-[12px] text-[#24466B] font-sans leading-relaxed text-justify">
+            <div className="space-y-3.5 text-[12px] text-[#E2E8F0] font-sans leading-relaxed text-justify">
               {person.storyParagraphs.map((para, idx) => (
                 <p key={idx}>{para}</p>
               ))}
             </div>
           </section>
 
-          <section className="rounded-[24px] bg-gradient-to-b from-[#183E63] to-[#0E2C48] border-2 border-[#C5A059] p-5.5 text-[#E0F2FE] space-y-3 shadow-md relative overflow-hidden">
-            <div className="space-y-0.5 border-b border-[#C5A059]/30 pb-2">
-              <span className="text-[9px] font-mono tracking-[0.25em] text-[#DFC384] uppercase font-extrabold block">
+          {/* SECTION 3: SUDUT PANDANG PASANGAN (PERSPECTIVE) */}
+          <section className="rounded-[24px] bg-gradient-to-b from-[#111C33] via-[#0D182E] to-[#060C18] border-2 border-[#F59E0B] p-5.5 text-white space-y-3 shadow-[0_14px_38px_rgba(0,0,0,0.7)] relative overflow-hidden">
+            <div className="space-y-0.5 border-b border-[#F59E0B]/30 pb-2">
+              <span className="text-[9.5px] font-mono tracking-[0.25em] text-[#FDA4AF] uppercase font-extrabold block drop-shadow-xs">
                 {person.perspectiveSubtitle}
               </span>
-              <h3 className="text-sm font-serif font-bold text-white tracking-wide">
+              <h3 className="text-sm font-serif font-bold text-white tracking-wide drop-shadow-[0_2px_8px_rgba(245,158,11,0.3)]">
                 {person.perspectiveTitle}
               </h3>
             </div>
-            <p className="text-[12px] italic font-serif leading-relaxed text-justify whitespace-pre-line text-[#EAF2F9]">
+            <p className="text-[12px] italic font-serif leading-relaxed text-justify whitespace-pre-line text-[#F1F5F9]">
               {person.perspectiveContent}
             </p>
           </section>
 
+          {/* FOOTER */}
           <footer className="flex flex-col items-center gap-3 pt-2">
             <a
               href="https://instagram.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-[#C5A059] bg-white text-xs text-[#133A5E] font-mono tracking-wider hover:bg-[#F1F7FB] active:scale-95 transition-all font-bold shadow-xs"
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-[#F59E0B] bg-[#111C33] text-xs text-white font-mono tracking-wider hover:bg-[#1A2E4E] active:scale-95 transition-all font-bold shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
             >
-              <svg className="w-3.5 h-3.5 fill-[#C5A059]" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 fill-[#FDE68A]" viewBox="0 0 24 24">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
               </svg>
               <span>{person.instagram}</span>
             </a>
             <Link
               href="/?opened=true"
-              className="text-[11px] font-mono text-[#5A7A97] hover:text-[#08182B] underline tracking-wider pt-1"
+              className="text-[11px] font-mono text-[#94A3B8] hover:text-[#FDE68A] underline tracking-wider pt-1 transition-colors"
             >
               Kembali ke Beranda Undangan
             </Link>

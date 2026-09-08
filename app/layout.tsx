@@ -16,7 +16,7 @@ const sansFont = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'The Wedding Celebration',
+  title: 'The Wedding of Silvia & Wahyudi',
   description: 'Undangan Pernikahan & Galeri Kenangan Digital',
 };
 
@@ -25,7 +25,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#090a0f',
+  themeColor: '#070D19',
 };
 
 export default function RootLayout({
@@ -35,12 +35,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className={`${serifFont.variable} ${sansFont.variable}`}>
-      <body className="bg-[#050608] text-gray-200 antialiased font-sans selection:bg-amber-500/30 selection:text-amber-200">
+      <body className="bg-[#03060C] text-gray-200 antialiased font-sans selection:bg-amber-500/30 selection:text-amber-200">
         <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-amber-950/20 via-transparent to-transparent" />
         
         {children}
 
-        {/* Music Player ditaruh di sini agar TIDAK MATI saat pindah ke halaman biografi */}
+        {/* Pemutar musik ditaruh di sini agar abadi di semua rute */}
         <MusicPlayer />
       </body>
     </html>

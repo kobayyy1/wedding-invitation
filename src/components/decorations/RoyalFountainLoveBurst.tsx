@@ -59,23 +59,23 @@ export default function RoyalFountainLoveBurst({ isActive }: RoyalFountainLoveBu
     const width = rect.width;
     const height = rect.height;
 
-    // Palet Elegan: Champagne Gold, Antique Bronze, Royal Sapphire, Porcelain Ice, & Pearl
+    // Palet Warna Mewah: 24K Gold, Warm Amber, Ruby Red, Pale Rose, & Diamond White
     const elegantHeartColors = [
-      '#DFC384', // Champagne Gold
-      '#C5A059', // Rich Antique Gold
-      '#E9D39E', // Pale Gold Sparkle
-      '#2B587E', // Royal Porcelain Sapphire
-      '#4E7C9F', // Classic Ceramic Blue
-      '#8DB3CE', // Soft Ice Glaze
-      '#FFFFFF', // Opal Pearl White
+      '#FDE68A', // Pale Gold Sparkle
+      '#F59E0B', // Vibrant 24K Gold
+      '#D97706', // Rich Warm Amber
+      '#FDA4AF', // Rose Petal Blush
+      '#FB7185', // Coral Rose
+      '#E11D48', // Imperial Ruby
+      '#FFFFFF', // Diamond Star White
     ];
 
     const elegantWaterColors = [
-      '#EAF3FA', // Pure Ice Foam
-      '#BED8EC', // Frosted Porcelain Blue
-      '#DFC384', // Champagne Water Sparkle
-      '#FFFFFF', // Crystal Drop
-      '#8CB5D3', // Soft Mineral Blue
+      '#FEF08A', // Golden Shimmer Foam
+      '#FDE68A', // Champagne Water Sparkle
+      '#FDA4AF', // Rose Mist
+      '#F59E0B', // Amber Crystal
+      '#FFFFFF', // Pure Light Drop
     ];
 
     const geyserDroplets: WaterGeyserDroplet[] = [];
@@ -102,7 +102,7 @@ export default function RoyalFountainLoveBurst({ isActive }: RoyalFountainLoveBu
       c.globalAlpha = Math.max(0, alpha);
       c.fillStyle = color;
       c.shadowColor = color;
-      c.shadowBlur = 12;
+      c.shadowBlur = 14;
 
       c.beginPath();
       const topCurve = -size * 0.3;
@@ -111,8 +111,8 @@ export default function RoyalFountainLoveBurst({ isActive }: RoyalFountainLoveBu
       c.bezierCurveTo(size * 1.05, -size * 0.05, size * 0.65, -size * 0.95, 0, topCurve);
       c.fill();
 
-      // Kilap kristal kaca lembut (Opal Glass Glaze)
-      c.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      // Kilap kristal emas lembut di tepi hati
+      c.fillStyle = 'rgba(255, 255, 255, 0.45)';
       c.beginPath();
       c.arc(-size * 0.25, -size * 0.25, size * 0.16, 0, Math.PI * 2);
       c.fill();
@@ -151,7 +151,7 @@ export default function RoyalFountainLoveBurst({ isActive }: RoyalFountainLoveBu
       ctx.clearRect(0, 0, width, height);
       frameCount++;
 
-      // 1. Semburan Geyser Air Kristal
+      // 1. Semburan Geyser Kristal Emas
       if (frameCount < 65) {
         for (let i = 0; i < 9; i++) {
           geyserDroplets.push({
@@ -178,7 +178,7 @@ export default function RoyalFountainLoveBurst({ isActive }: RoyalFountainLoveBu
           ctx.globalAlpha = Math.max(0, d.alpha);
           ctx.fillStyle = d.color;
           ctx.shadowColor = d.color;
-          ctx.shadowBlur = 10;
+          ctx.shadowBlur = 12;
           ctx.beginPath();
           ctx.ellipse(d.x, d.y, d.size * 0.6, d.size * 1.3, 0, 0, Math.PI * 2);
           ctx.fill();
@@ -188,13 +188,12 @@ export default function RoyalFountainLoveBurst({ isActive }: RoyalFountainLoveBu
         }
       }
 
-      // 2. Ledakan di Ketinggian
       if (frameCount >= 48 && !hasExploded) {
         hasExploded = true;
         triggerMegaExplosion(width / 2, height * 0.28);
       }
 
-      // Cincin Shockwave Emas Champagne Halus
+      // Cincin Shockwave Emas Menyala
       if (shockwaveAlpha > 0) {
         shockwaveRadius += 10;
         shockwaveAlpha -= 0.022;
@@ -202,16 +201,16 @@ export default function RoyalFountainLoveBurst({ isActive }: RoyalFountainLoveBu
         ctx.save();
         ctx.globalAlpha = Math.max(0, shockwaveAlpha);
         ctx.lineWidth = 4;
-        ctx.strokeStyle = '#DFC384';
-        ctx.shadowColor = '#C5A059';
-        ctx.shadowBlur = 18;
+        ctx.strokeStyle = '#FDE68A';
+        ctx.shadowColor = '#F59E0B';
+        ctx.shadowBlur = 22;
         ctx.beginPath();
         ctx.arc(width / 2, height * 0.28, shockwaveRadius, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
       }
 
-      // 3. Render Hati Melayang Berayun
+      // 3. Render Hati Emas & Ruby Melayang
       let activeHearts = 0;
       for (let i = megaHearts.length - 1; i >= 0; i--) {
         const h = megaHearts[i];
