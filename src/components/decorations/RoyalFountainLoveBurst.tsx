@@ -24,7 +24,7 @@ interface MegaBurstHeart {
   size: number;
   alpha: number;
   decay: number;
-  color: string;
+  spriteIndex: number;
   rotation: number;
   rotSpeed: number;
   gravity: number;
@@ -59,88 +59,90 @@ export default function RoyalFountainLoveBurst({ isActive }: RoyalFountainLoveBu
     const width = rect.width;
     const height = rect.height;
 
-    // Palet Warna Mewah: 24K Gold, Warm Amber, Ruby Red, Pale Rose, & Diamond White
+    // Palet Warna Mewah
     const elegantHeartColors = [
-      '#FDE68A', // Pale Gold Sparkle
-      '#F59E0B', // Vibrant 24K Gold
-      '#D97706', // Rich Warm Amber
-      '#FDA4AF', // Rose Petal Blush
+      '#FDE68A', // Pale Gold
+      '#F59E0B', // 24K Gold
+      '#D97706', // Amber
+      '#FDA4AF', // Rose Petal
       '#FB7185', // Coral Rose
       '#E11D48', // Imperial Ruby
-      '#FFFFFF', // Diamond Star White
+      '#FFFFFF', // Diamond White
     ];
 
     const elegantWaterColors = [
-      '#FEF08A', // Golden Shimmer Foam
-      '#FDE68A', // Champagne Water Sparkle
-      '#FDA4AF', // Rose Mist
-      '#F59E0B', // Amber Crystal
-      '#FFFFFF', // Pure Light Drop
+      '#FEF08A',
+      '#FDE68A',
+      '#FDA4AF',
+      '#F59E0B',
+      '#FFFFFF',
     ];
+
+    // OPTIMASI 1: Pre-render Sprite Hati di Offscreen Canvas (Shadow di-cache sekali)
+    const heartSprites: HTMLCanvasElement[] = elegantHeartColors.map((color) => {
+      const offCanvas = document.createElement('canvas');
+      const s = 64; // Resolusi sprite
+      offCanvas.width = s;
+      offCanvas.height = s;
+      const oCtx = offCanvas.getContext('2d');
+      if (!oCtx) return offCanvas;
+
+      oCtx.translate(s / 2, s / 2);
+      
+      // Glow dipanggang sekali saja di sini (tidak membebani loop)
+      oCtx.shadowColor = color;
+      oCtx.shadowBlur = 8;
+      oCtx.fillStyle = color;
+
+      oCtx.beginPath();
+      const sz = 16;
+      const topCurve = -sz * 0.3;
+      oCtx.moveTo(0, topCurve);
+      oCtx.bezierCurveTo(-sz * 0.65, -sz * 0.95, -sz * 1.05, -sz * 0.05, 0, sz * 0.95);
+      oCtx.bezierCurveTo(sz * 1.05, -sz * 0.05, sz * 0.65, -sz * 0.95, 0, topCurve);
+      oCtx.fill();
+
+      // Kilap kristal putih
+      oCtx.shadowBlur = 0;
+      oCtx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+      oCtx.beginPath();
+      oCtx.arc(-sz * 0.25, -sz * 0.25, sz * 0.18, 0, Math.PI * 2);
+      oCtx.fill();
+
+      return offCanvas;
+    });
 
     const geyserDroplets: WaterGeyserDroplet[] = [];
     const megaHearts: MegaBurstHeart[] = [];
 
-    let shockwaveRadius = 0;
+    let shockwaveRadius = 20;
     let shockwaveAlpha = 0;
     let frameCount = 0;
     let hasExploded = false;
     let animationFrameId: number;
 
-    const drawMegaHeart = (
-      c: CanvasRenderingContext2D,
-      x: number,
-      y: number,
-      size: number,
-      color: string,
-      alpha: number,
-      rot: number
-    ) => {
-      c.save();
-      c.translate(x, y);
-      c.rotate(rot);
-      c.globalAlpha = Math.max(0, alpha);
-      c.fillStyle = color;
-      c.shadowColor = color;
-      c.shadowBlur = 14;
-
-      c.beginPath();
-      const topCurve = -size * 0.3;
-      c.moveTo(0, topCurve);
-      c.bezierCurveTo(-size * 0.65, -size * 0.95, -size * 1.05, -size * 0.05, 0, size * 0.95);
-      c.bezierCurveTo(size * 1.05, -size * 0.05, size * 0.65, -size * 0.95, 0, topCurve);
-      c.fill();
-
-      // Kilap kristal emas lembut di tepi hati
-      c.fillStyle = 'rgba(255, 255, 255, 0.45)';
-      c.beginPath();
-      c.arc(-size * 0.25, -size * 0.25, size * 0.16, 0, Math.PI * 2);
-      c.fill();
-
-      c.restore();
-    };
-
     const triggerMegaExplosion = (peakX: number, peakY: number) => {
       shockwaveRadius = 20;
       shockwaveAlpha = 0.9;
 
-      const totalHearts = 120;
+      // Jumlah hati diatur 75 (sangat ramai tapi super ringan)
+      const totalHearts = 75;
       for (let i = 0; i < totalHearts; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 12 + 4;
+        const speed = Math.random() * 11 + 3.5;
 
         megaHearts.push({
-          x: peakX + (Math.random() - 0.5) * 35,
-          y: peakY + (Math.random() - 0.5) * 35,
+          x: peakX + (Math.random() - 0.5) * 30,
+          y: peakY + (Math.random() - 0.5) * 30,
           vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed * 0.85 - 3.5,
-          size: Math.random() * 20 + 22,
+          vy: Math.sin(angle) * speed * 0.85 - 3,
+          size: Math.random() * 14 + 18,
           alpha: 1,
-          decay: Math.random() * 0.004 + 0.003,
-          color: elegantHeartColors[Math.floor(Math.random() * elegantHeartColors.length)],
+          decay: Math.random() * 0.005 + 0.004,
+          spriteIndex: Math.floor(Math.random() * heartSprites.length),
           rotation: Math.random() * Math.PI * 2,
-          rotSpeed: (Math.random() - 0.5) * 0.06,
-          gravity: Math.random() * 0.04 + 0.07,
+          rotSpeed: (Math.random() - 0.5) * 0.05,
+          gravity: Math.random() * 0.03 + 0.06,
           swayOffset: Math.random() * Math.PI * 2,
           swaySpeed: Math.random() * 0.04 + 0.02,
         });
@@ -151,66 +153,60 @@ export default function RoyalFountainLoveBurst({ isActive }: RoyalFountainLoveBu
       ctx.clearRect(0, 0, width, height);
       frameCount++;
 
-      // 1. Semburan Geyser Kristal Emas
-      if (frameCount < 65) {
-        for (let i = 0; i < 9; i++) {
+      // 1. Semburan Geyser Air (Dibatasi 3 partikel per frame agar ringan)
+      if (frameCount < 55) {
+        for (let i = 0; i < 3; i++) {
           geyserDroplets.push({
-            x: width / 2 + (Math.random() - 0.5) * 45,
+            x: width / 2 + (Math.random() - 0.5) * 35,
             y: height + 10,
-            vx: (Math.random() - 0.5) * 4.5,
-            vy: -(Math.random() * 9 + 21),
-            size: Math.random() * 12 + 10,
+            vx: (Math.random() - 0.5) * 3.5,
+            vy: -(Math.random() * 8 + 20),
+            size: Math.random() * 8 + 8,
             alpha: 1,
             color: elegantWaterColors[Math.floor(Math.random() * elegantWaterColors.length)],
           });
         }
       }
 
+      // Render Geyser (Tanpa shadowBlur dinamis)
       for (let i = geyserDroplets.length - 1; i >= 0; i--) {
         const d = geyserDroplets[i];
         d.x += d.vx;
         d.y += d.vy;
-        d.vy += 0.42;
-        d.alpha -= 0.012;
+        d.vy += 0.45;
+        d.alpha -= 0.016;
 
         if (d.alpha > 0) {
-          ctx.save();
-          ctx.globalAlpha = Math.max(0, d.alpha);
+          ctx.globalAlpha = d.alpha;
           ctx.fillStyle = d.color;
-          ctx.shadowColor = d.color;
-          ctx.shadowBlur = 12;
           ctx.beginPath();
-          ctx.ellipse(d.x, d.y, d.size * 0.6, d.size * 1.3, 0, 0, Math.PI * 2);
+          ctx.ellipse(d.x, d.y, d.size * 0.5, d.size * 1.1, 0, 0, Math.PI * 2);
           ctx.fill();
-          ctx.restore();
         } else {
           geyserDroplets.splice(i, 1);
         }
       }
 
-      if (frameCount >= 48 && !hasExploded) {
+      // Ledakan Hati di puncak
+      if (frameCount >= 42 && !hasExploded) {
         hasExploded = true;
         triggerMegaExplosion(width / 2, height * 0.28);
       }
 
-      // Cincin Shockwave Emas Menyala
+      // Cincin Shockwave
       if (shockwaveAlpha > 0) {
-        shockwaveRadius += 10;
-        shockwaveAlpha -= 0.022;
+        shockwaveRadius += 9;
+        shockwaveAlpha -= 0.025;
 
-        ctx.save();
         ctx.globalAlpha = Math.max(0, shockwaveAlpha);
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 3;
         ctx.strokeStyle = '#FDE68A';
-        ctx.shadowColor = '#F59E0B';
-        ctx.shadowBlur = 22;
         ctx.beginPath();
         ctx.arc(width / 2, height * 0.28, shockwaveRadius, 0, Math.PI * 2);
         ctx.stroke();
-        ctx.restore();
       }
 
-      // 3. Render Hati Emas & Ruby Melayang
+      // OPTIMASI 2: Render Hati Cepat menggunakan drawImage (Zero Bezier Calculation)
       let activeHearts = 0;
       for (let i = megaHearts.length - 1; i >= 0; i--) {
         const h = megaHearts[i];
@@ -218,17 +214,27 @@ export default function RoyalFountainLoveBurst({ isActive }: RoyalFountainLoveBu
 
         activeHearts++;
         h.swayOffset += h.swaySpeed;
-        h.x += h.vx + Math.sin(h.swayOffset) * 1.2;
+        h.x += h.vx + Math.sin(h.swayOffset) * 1.1;
         h.y += h.vy;
         h.vy += h.gravity;
         h.vx *= 0.985;
         h.rotation += h.rotSpeed;
         h.alpha -= h.decay;
 
-        drawMegaHeart(ctx, h.x, h.y, h.size, h.color, h.alpha, h.rotation);
+        ctx.save();
+        ctx.translate(h.x, h.y);
+        ctx.rotate(h.rotation);
+        ctx.globalAlpha = Math.max(0, h.alpha);
+        
+        // Menempelkan sprite yang sudah jadi
+        const sprite = heartSprites[h.spriteIndex];
+        ctx.drawImage(sprite, -h.size, -h.size, h.size * 2, h.size * 2);
+        ctx.restore();
       }
 
-      if (frameCount < 65 || geyserDroplets.length > 0 || activeHearts > 0 || shockwaveAlpha > 0) {
+      ctx.globalAlpha = 1;
+
+      if (frameCount < 55 || geyserDroplets.length > 0 || activeHearts > 0 || shockwaveAlpha > 0) {
         animationFrameId = requestAnimationFrame(render);
       } else {
         setHasStarted(false);

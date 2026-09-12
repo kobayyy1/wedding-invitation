@@ -1,12 +1,9 @@
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
-  // Izinkan akses HMR dev server dari HP / jaringan lokal
-  allowedDevOrigins: [
-    '192.168.100.16',
-    '192.168.100.16:3000',
-    'localhost:3000',
-  ],
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'export',
+  images: {
+    unoptimized: true,
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig; 

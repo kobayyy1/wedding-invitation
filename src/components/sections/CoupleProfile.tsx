@@ -94,7 +94,7 @@ export default function CoupleProfile({ isRevealing = false }: CoupleProfileProp
           <BotanicalRoseWreath />
           <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-[#FDE68A] p-1 shadow-[0_0_24px_rgba(245,158,11,0.45)] bg-gradient-to-b from-[#B45309] via-[#92400E] to-[#78350F]">
             <img
-              src="/images/couple-3d.png"
+              src="/images/silvia.png"
               alt="Silvia Wulandari"
               className="w-full h-full object-cover object-top filter brightness-105 rounded-full"
             />
@@ -106,7 +106,7 @@ export default function CoupleProfile({ isRevealing = false }: CoupleProfileProp
             Mempelai Wanita
           </span>
           <h3 className="text-2xl font-serif text-white font-extrabold tracking-wide pt-1 drop-shadow-[0_2px_12px_rgba(245,158,11,0.5)]">
-            Silvia Wulandari, S.Kom
+            Silvia Wulandari
           </h3>
         </div>
 
@@ -146,9 +146,9 @@ export default function CoupleProfile({ isRevealing = false }: CoupleProfileProp
           <BotanicalRoseWreath />
           <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-[#FDE68A] p-1 shadow-[0_0_24px_rgba(245,158,11,0.45)] bg-gradient-to-b from-[#B45309] via-[#92400E] to-[#78350F]">
             <img
-              src="/images/couple-3d.png"
-              alt="Wahyudi"
-              className="w-full h-full object-cover object-bottom filter brightness-105 rounded-full"
+              src="/images/wahyudi.png"
+              alt="Riyandi Wahyudi"
+              className="w-full h-full object-cover object-top filter brightness-105 rounded-full"
             />
           </div>
         </div>
@@ -158,7 +158,7 @@ export default function CoupleProfile({ isRevealing = false }: CoupleProfileProp
             Mempelai Pria
           </span>
           <h3 className="text-2xl font-serif text-white font-extrabold tracking-wide pt-1 drop-shadow-[0_2px_12px_rgba(245,158,11,0.5)]">
-            Wahyudi, S.Kom
+            Riyandi Wahyudi
           </h3>
         </div>
 

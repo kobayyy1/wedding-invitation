@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 const WEDDING_DATE = new Date(2026, 8, 20, 9, 0, 0);
@@ -8,9 +8,10 @@ const WEDDING_DATE = new Date(2026, 8, 20, 9, 0, 0);
 const ADDRESS_TEXT =
   'Jl. Cemp. Putih Bar. No.3, RT.9/RW.13, Cemp. Putih Bar., Kec. Cemp. Putih, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10520';
 
-const GOOGLE_MAPS_URL = 'https://www.google.com/maps/place/Jl.+Cemp.+Putih+Bar.+No.65,+RT.6%2FRW.6,+Cemp.+Putih+Bar.,+Kec.+Cemp.+Putih,+Kota+Jakarta+Pusat,+Daerah+Khusus+Ibukota+Jakarta+10520/@-6.1841581,106.8658512,21z/data=!4m6!3m5!1s0x2e69f4f812859c19:0x3fd245196bff45e3!8m2!3d-6.1841476!4d106.8658339!16s%2Fg%2F11c5q48xv6?hl=id-ID&entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D';
+const GOOGLE_MAPS_URL =
+  'https://www.google.com/maps/place/Jl.+Cemp.+Putih+Bar.+No.65,+RT.6%2FRW.6,+Cemp.+Putih+Bar.,+Kec.+Cemp.+Putih,+Kota+Jakarta+Pusat,+Daerah+Khusus+Ibukota+Jakarta+10520/@-6.1841581,106.8658512,21z/data=!4m6!3m5!1s0x2e69f4f812859c19:0x3fd245196bff45e3!8m2!3d-6.1841476!4d106.8658339!16s%2Fg%2F11c5q48xv6?hl=id-ID&entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D';
 
-const CALENDAR_URL = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=The+Wedding+of+Silvia+%26+Wahyudi&dates=20260920T020000Z/20260920T080000Z&details=Pernikahan+Silvia+Wulandari+%26+Wahyudi&location=${encodeURIComponent(
+const CALENDAR_URL = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=The+Wedding+of+Silvia+%26+Riyandi+Wahyudi&dates=20260920T020000Z/20260920T080000Z&details=Pernikahan+Silvia+Wulandari+%26+Riyandi+Wahyudi&location=${encodeURIComponent(
   ADDRESS_TEXT
 )}`;
 
@@ -124,15 +125,22 @@ export default function AcaraPage() {
   });
 
   const [name, setName] = useState('');
+  const [attendance, setAttendance] = useState<'hadir_1' | 'hadir_2' | 'tidak_hadir'>('hadir_1');
   const [message, setMessage] = useState('');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
+  const [isAlreadySubmitted, setIsAlreadySubmitted] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const submitted = localStorage.getItem('wedding_wish_submitted');
+      if (submitted === 'true') {
+        setIsAlreadySubmitted(true);
+      }
+    }
+
     const calculateTime = () => {
       const difference = WEDDING_DATE.getTime() - new Date().getTime();
       if (difference > 0) {
@@ -152,20 +160,42 @@ export default function AcaraPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+  const handleCopyRekening = async () => {
+    const rekNumber = '7420355577';
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(rekNumber);
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = rekNumber;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2500);
+    } catch {
+      setIsCopied(false);
     }
   };
 
-  const handleRemoveFile = () => {
-    setSelectedFile(null);
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setPreviewUrl(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+  const generateTimestamp = () => {
+    const now = new Date();
+    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+    const dayName = days[now.getDay()];
+    const dateNum = now.getDate();
+    const monthName = months[now.getMonth()];
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    return `${dayName}, ${dateNum} ${monthName} • ${hours}:${minutes} WIB`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -175,34 +205,56 @@ export default function AcaraPage() {
       return;
     }
 
+    if (isSubmitting || isAlreadySubmitted) return;
+
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    try {
-      const formData = new FormData();
-      formData.append('name', name.trim());
-      formData.append('message', message.trim());
-      if (selectedFile) {
-        formData.append('proof', selectedFile);
-      }
+    const attendanceLabel =
+      attendance === 'hadir_1'
+        ? 'Hadir (1 Orang)'
+        : attendance === 'hadir_2'
+        ? 'Hadir (2 Orang)'
+        : 'Berhalangan Hadir';
 
+    const newWish = {
+      id: 'wish-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      name: name.trim(),
+      attendance: attendanceLabel,
+      message: message.trim(),
+      relationship: 'Tamu Undangan',
+      createdAt: generateTimestamp(),
+    };
+
+    try {
+      // 1. Simpan ke database/server terlebih dahulu
       const res = await fetch('/api/tanda-kasih', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newWish),
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        setIsSuccess(true);
-        setName('');
-        setMessage('');
-        handleRemoveFile();
-      } else {
-        setErrorMessage(data.error || 'Gagal menyimpan data ke sistem. Silakan coba kembali.');
+      if (!res.ok) {
+        throw new Error('Gagal menyimpan data ke database. Silakan coba kembali.');
       }
-    } catch {
-      setErrorMessage('Kendala jaringan saat mengirim. Silakan coba sesaat lagi.');
+
+      // 2. Simpan ke localStorage
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('wedding_wishes');
+        const currentList = saved ? JSON.parse(saved) : [];
+        const filtered = currentList.filter((item: { id: string }) => item.id !== newWish.id);
+        localStorage.setItem('wedding_wishes', JSON.stringify([newWish, ...filtered]));
+        localStorage.setItem('wedding_wish_submitted', 'true');
+      }
+
+      // 3. Update status berhasil
+      setIsSuccess(true);
+      setIsAlreadySubmitted(true);
+      setName('');
+      setMessage('');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Terjadi kendala koneksi ke database.';
+      setErrorMessage(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -264,6 +316,7 @@ export default function AcaraPage() {
           }
         `}</style>
 
+        {/* EFEK KELOPAK BUNGA */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
           <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-radial from-[#D97706]/25 via-[#BE123C]/10 to-transparent blur-3xl" />
           <div className="absolute top-[38%] -left-20 w-80 h-80 bg-radial from-[#E11D48]/20 via-transparent to-transparent blur-3xl" />
@@ -331,6 +384,7 @@ export default function AcaraPage() {
           })}
         </div>
 
+        {/* HEADER NAVBAR */}
         <header className="sticky top-0 z-40 bg-[#070D19]/90 backdrop-blur-xl border-b border-[#F59E0B]/35 px-5 py-3.5 flex items-center justify-between shadow-[0_4px_25px_rgba(0,0,0,0.5)]">
           <Link
             href="/?opened=true#couple-profile"
@@ -343,12 +397,13 @@ export default function AcaraPage() {
               Lembaran Acara
             </span>
             <span className="text-[8.5px] font-mono text-[#FDA4AF] tracking-widest uppercase font-semibold">
-              Silvia &amp; Wahyudi
+              Silvia &amp; Riyandi
             </span>
           </div>
         </header>
 
         <div className="px-5 pt-6 space-y-8 anim-page-bloom relative z-10">
+          {/* SECTION 1: COUNTDOWN & KALENDER */}
           <section className="relative rounded-[30px] bg-gradient-to-b from-[#111C33]/90 via-[#0B1528]/95 to-[#060D1A] border-2 border-[#F59E0B] p-6 text-center text-white space-y-5 shadow-[0_16px_45px_rgba(0,0,0,0.6)] overflow-hidden backdrop-blur-md">
             <GoldFiligreeCorner className="absolute -top-1 -left-1" />
             <GoldFiligreeCorner className="absolute -top-1 -right-1 scale-x-[-1]" />
@@ -441,11 +496,12 @@ export default function AcaraPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#F59E0B] bg-gradient-to-r from-[#B45309]/50 via-[#F59E0B]/30 to-[#B45309]/50 hover:brightness-125 active:scale-95 text-xs font-mono text-[#FDE68A] font-bold tracking-wider transition-all shadow-[0_2px_12px_rgba(245,158,11,0.25)]"
               >
-                <span>📅 Simpan di Kalender Google</span>
+                <span>📅 Simpan di Kalender</span>
               </a>
             </div>
           </section>
 
+          {/* SECTION 2: WAKTU & TEMPAT */}
           <section className="space-y-3">
             <div className="text-center space-y-1">
               <span className="text-[10px] font-mono tracking-[0.28em] uppercase text-[#FDE68A] font-extrabold block">
@@ -500,13 +556,14 @@ export default function AcaraPage() {
             </div>
           </section>
 
+          {/* SECTION 3: TITIP HADIAH / AMPLOP DIGITAL */}
           <section className="space-y-3">
             <div className="text-center space-y-1">
-              <span className="text-[10px] font-mono tracking-[0.28em] uppercase text-[#FDE68A] font-extrabold block">
-                Ungkapan Kasih
+              <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#FDE68A] font-extrabold block">
+                Titip Hadiah / Amplop Digital
               </span>
               <h3 className="text-2xl font-serif text-white font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-                Amplop Digital &amp; Doa Restu
+                Tanda Kasih &amp; Doa Restu
               </h3>
               <p className="text-xs text-[#CBD5E1] leading-relaxed max-w-xs mx-auto pt-0.5">
                 Doa restu Anda adalah kado terindah bagi kami. Bagi keluarga dan sahabat yang ingin memberikan tanda kasih secara digital:
@@ -519,46 +576,78 @@ export default function AcaraPage() {
               <GoldFiligreeCorner className="absolute -bottom-1 -left-1 scale-y-[-1]" />
               <GoldFiligreeCorner className="absolute -bottom-1 -right-1 rotate-180" />
 
-              <div className="space-y-1 relative z-10">
-                <span className="text-xs font-mono font-extrabold tracking-widest text-[#FDE68A] uppercase block drop-shadow-xs">
-                  QRIS Pembayaran Digital
-                </span>
-                <p className="text-[11px] text-[#94A3B8]">
-                  Dapat dipindai via BCA, Mandiri, GoPay, OVO, ShopeePay &amp; Seluruh M-Banking
-                </p>
-              </div>
+              {/* KARTU DEBIT BCA MIDNIGHT OBSIDIAN & 24K GOLD */}
+              <div className="w-full max-w-sm relative z-10">
+                <div className="w-full rounded-2xl bg-gradient-to-br from-[#0B1528] via-[#060D1A] to-[#02050B] border-2 border-[#F59E0B] p-5 shadow-[0_14px_35px_rgba(245,158,11,0.25)] relative overflow-hidden text-left">
+                  <div className="absolute -right-10 -bottom-10 w-36 h-36 rounded-full bg-[#F59E0B]/15 blur-2xl pointer-events-none" />
+                  <div className="absolute -left-10 -top-10 w-28 h-28 rounded-full bg-[#FDE68A]/10 blur-xl pointer-events-none" />
 
-              <div className="relative p-3.5 rounded-3xl bg-gradient-to-b from-white to-[#F1F5F9] border-2 border-[#F59E0B] shadow-[0_0_28px_rgba(245,158,11,0.25)] w-60 h-60 flex items-center justify-center overflow-hidden">
-                <div className="w-full h-full rounded-2xl bg-white p-2 border border-[#E2E8F0] flex items-center justify-center">
-                  <img
-                    src="/images/qris.png"
-                    alt="QRIS Barcode"
-                    className="w-full h-full object-contain filter contrast-105"
-                  />
+                  {/* Header Kartu */}
+                  <div className="flex items-center justify-between pb-3 border-b border-[#F59E0B]/30">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-sans font-black tracking-wider text-[#060D1A] bg-gradient-to-r from-[#FDE68A] via-[#F59E0B] to-[#D97706] px-2.5 py-0.5 rounded shadow-sm">
+                        BCA
+                      </span>
+                      <span className="text-[10px] font-mono tracking-wider text-[#CBD5E1] uppercase font-semibold">
+                        Bank Central Asia
+                      </span>
+                    </div>
+                    <span className="text-[9px] font-mono tracking-widest text-[#FDE68A] uppercase font-extrabold bg-[#F59E0B]/15 border border-[#F59E0B]/50 px-2.5 py-0.5 rounded-full shadow-inner">
+                      Titip Hadiah
+                    </span>
+                  </div>
+
+                  {/* Chip Emas Kartu */}
+                  <div className="w-10 h-7 rounded bg-gradient-to-br from-[#FDE68A] via-[#F59E0B] to-[#92400E] border border-[#FDE68A]/70 flex items-center justify-center my-3 shadow-md">
+                    <div className="w-8 h-5 border border-black/30 rounded-xs" />
+                  </div>
+
+                  {/* Nomor Rekening */}
+                  <div className="pt-1">
+                    <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-[#94A3B8] block">
+                      Nomor Rekening
+                    </span>
+                    <span className="text-xl sm:text-2xl font-mono font-extrabold text-[#FDE68A] tracking-[0.14em] block drop-shadow-[0_2px_8px_rgba(245,158,11,0.3)]">
+                      7420 023 0472
+                    </span>
+                  </div>
+
+                  {/* Nama Pemilik */}
+                  <div className="pt-3 flex items-end justify-between">
+                    <div>
+                      <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-[#94A3B8] block">
+                        Atas Nama
+                      </span>
+                      <span className="text-sm font-serif font-bold text-white tracking-wider block">
+                        SILVIA WULANDARI
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-[#FDE68A] font-mono tracking-widest uppercase font-semibold">
+                      Amplop Digital
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <div className="w-full relative z-10">
-                <a
-                  href="/images/qris.png"
-                  download="QRIS-Wedding-Silvia-Wahyudi.png"
-                  className="w-full py-2.5 px-4 rounded-xl border border-[#F59E0B]/60 bg-[#162744]/80 text-[#FDE68A] text-xs font-mono font-bold tracking-wider hover:bg-[#1C3259] active:scale-98 transition-all flex items-center justify-center gap-2 shadow-xs"
+                {/* Tombol Salin Nomor Rekening */}
+                <button
+                  type="button"
+                  onClick={handleCopyRekening}
+                  className="w-full mt-3 py-2.5 px-4 rounded-xl border border-[#F59E0B] bg-gradient-to-r from-[#0E1A30] via-[#142647] to-[#0E1A30] text-[#FDE68A] text-xs font-mono font-bold tracking-wider hover:brightness-125 active:scale-98 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
                 >
-                  <span>📥 Unduh Barcode QRIS</span>
-                </a>
+                  <span>{isCopied ? '✅ Tersalin ke Clipboard' : '📋 Salin Nomor Rekening'}</span>
+                </button>
               </div>
 
+              {/* FORM UCAPAN & DOA RESTU DENGAN PILIHAN KEHADIRAN (RSVP) */}
               <div className="w-full pt-4 border-t border-[#F59E0B]/25 text-left space-y-3.5 relative z-10">
                 <div className="space-y-1">
                   <span className="text-xs font-mono font-extrabold text-[#FDE68A] uppercase tracking-wider block">
-                    Konfirmasi Tanda Kasih &amp; Doa
+                    Konfirmasi Kehadiran &amp; Doa Restu
                   </span>
-                  <p className="text-[11px] text-[#94A3B8] leading-relaxed">
-                    Sertakan nama, doa tulus, dan lampiran bukti transfer agar tersimpan langsung untuk kedua mempelai:
-                  </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-3.5">
+                  {/* 1. NAMA PENGIRIM */}
                   <div>
                     <label className="text-[10.5px] font-mono font-bold text-[#FDE68A] uppercase block mb-1">
                       Nama Pengirim:
@@ -566,13 +655,44 @@ export default function AcaraPage() {
                     <input
                       type="text"
                       required
+                      disabled={isAlreadySubmitted}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="Contoh: Rian &amp; Keluarga"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#F59E0B]/40 bg-[#060D1A]/90 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#F59E0B] focus:ring-1 focus:ring-[#F59E0B] transition-all"
+                      placeholder={isAlreadySubmitted ? 'Kehadiran & Doa Anda telah tersimpan' : 'Contoh: Rian & Keluarga'}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#F59E0B]/40 bg-[#060D1A]/90 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#F59E0B] focus:ring-1 focus:ring-[#F59E0B] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
 
+                  {/* 2. PILIHAN KEHADIRAN (RSVP) */}
+                  <div>
+                    <label className="text-[10.5px] font-mono font-bold text-[#FDE68A] uppercase block mb-1.5">
+                      Konfirmasi Kehadiran:
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { value: 'hadir_1', label: 'Hadir 1 Org', icon: '👤' },
+                        { value: 'hadir_2', label: 'Hadir 2 Org', icon: '👥' },
+                        { value: 'tidak_hadir', label: 'Berhalangan', icon: '🕊️' },
+                      ].map((item) => (
+                        <button
+                          key={item.value}
+                          type="button"
+                          disabled={isAlreadySubmitted}
+                          onClick={() => setAttendance(item.value as 'hadir_1' | 'hadir_2' | 'tidak_hadir')}
+                          className={`py-2 px-1 rounded-xl border text-[10.5px] font-mono font-bold transition-all flex flex-col items-center justify-center gap-1 ${
+                            attendance === item.value
+                              ? 'border-[#FDE68A] bg-gradient-to-b from-[#B45309] to-[#92400E] text-white shadow-[0_0_12px_rgba(245,158,11,0.4)] scale-102'
+                              : 'border-[#F59E0B]/30 bg-[#060D1A]/80 text-[#CBD5E1] hover:border-[#F59E0B]/60'
+                          } disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
+                        >
+                          <span className="text-sm">{item.icon}</span>
+                          <span>{item.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 3. UNTAIAN DOA RESTU */}
                   <div>
                     <label className="text-[10.5px] font-mono font-bold text-[#FDE68A] uppercase block mb-1">
                       Untaian Doa &amp; Restu:
@@ -580,43 +700,12 @@ export default function AcaraPage() {
                     <textarea
                       required
                       rows={3}
+                      disabled={isAlreadySubmitted}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Tuliskan ucapan selamat atau doa restu Anda..."
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#F59E0B]/40 bg-[#060D1A]/90 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#F59E0B] focus:ring-1 focus:ring-[#F59E0B] transition-all resize-none"
+                      placeholder={isAlreadySubmitted ? 'Doa Anda telah tercatat di sistem' : 'Tuliskan ucapan selamat atau doa restu Anda...'}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#F59E0B]/40 bg-[#060D1A]/90 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#F59E0B] focus:ring-1 focus:ring-[#F59E0B] transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                     />
-                  </div>
-
-                  <div>
-                    <label className="text-[10.5px] font-mono font-bold text-[#FDE68A] uppercase block mb-1">
-                      Lampiran Bukti Transfer (Opsional):
-                    </label>
-                    <div className="p-3 rounded-2xl border-2 border-dashed border-[#F59E0B]/50 bg-[#060D1A]/60 flex flex-col items-center justify-center gap-2 text-center">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="w-full text-xs text-[#94A3B8] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#B45309] file:text-white file:text-[10px] file:font-mono file:font-bold hover:file:bg-[#D97706] cursor-pointer"
-                      />
-
-                      {previewUrl && (
-                        <div className="mt-1 relative inline-block p-1 bg-white border border-[#F59E0B] rounded-xl shadow-md">
-                          <img
-                            src={previewUrl}
-                            alt="Preview Bukti Transfer"
-                            className="w-20 h-20 object-cover rounded-lg"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleRemoveFile}
-                            className="absolute -top-2 -right-2 bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow-sm"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      )}
-                    </div>
                   </div>
 
                   {errorMessage && (
@@ -627,26 +716,45 @@ export default function AcaraPage() {
 
                   {isSuccess && (
                     <div className="p-3.5 rounded-2xl bg-emerald-950/70 border border-emerald-500 text-emerald-200 text-xs font-serif leading-relaxed text-center shadow-xs">
-                      ✨ Terima kasih banyak! Doa restu dan bukti tanda kasih Anda telah berhasil tersimpan di sistem untuk kedua mempelai.
+                      ✨ Terima kasih banyak! Konfirmasi kehadiran dan doa restu Anda telah berhasil tersimpan di sistem.
                     </div>
                   )}
 
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className={`w-full py-3.5 px-4 rounded-2xl border-2 border-[#FDE68A] bg-gradient-to-r from-[#92400E] via-[#D97706] to-[#92400E] text-white text-xs font-mono font-bold tracking-wider hover:brightness-110 active:scale-98 transition-all flex items-center justify-center gap-2 shadow-[0_6px_22px_rgba(217,119,6,0.35)] ${
-                      isSubmitting ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
-                    }`}
-                  >
-                    <span>
-                      {isSubmitting ? '⏳ Sedang Menyimpan ke Sistem...' : '💌 Kirim Tanda Kasih &amp; Doa'}
-                    </span>
-                  </button>
+                  {/* HIDE BUTTON JIKA SUDAH SUBMIT */}
+                  {!isAlreadySubmitted ? (
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className={`w-full py-3.5 px-4 rounded-2xl border-2 border-[#FDE68A] bg-gradient-to-r from-[#92400E] via-[#D97706] to-[#92400E] text-white text-xs font-mono font-bold tracking-wider hover:brightness-110 active:scale-98 transition-all flex items-center justify-center gap-2 shadow-[0_6px_22px_rgba(217,119,6,0.35)] ${
+                        isSubmitting ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+                      }`}
+                    >
+                      <span>
+                        {isSubmitting ? '⏳ Sedang Menyimpan ke Database...' : '💌 Kirim Konfirmasi & Doa'}
+                      </span>
+                    </button>
+                  ) : (
+                    <div className="w-full py-3 px-4 rounded-xl border border-emerald-500/60 bg-emerald-950/50 text-emerald-300 text-xs font-mono text-center font-bold tracking-wide shadow-inner">
+                      ✓ Konfirmasi &amp; Doa Anda Telah Berhasil Terkirim
+                    </div>
+                  )}
                 </form>
+
+                {/* TOMBOL NAVIGASI KE BUKU TAMU */}
+                <div className="pt-2">
+                  <Link
+                    href="/ucapan"
+                    className="w-full py-3 px-4 rounded-xl border border-[#F59E0B]/60 bg-[#162744]/90 text-[#FDE68A] text-xs font-mono font-bold tracking-wider hover:bg-[#1E365D] active:scale-98 transition-all flex items-center justify-center gap-2 shadow-xs"
+                  >
+                    <span>📖 Lihat Kumpulan Doa &amp; Kehadiran Tamu</span>
+                    <span className="text-sm">→</span>
+                  </Link>
+                </div>
               </div>
             </div>
           </section>
 
+          {/* FOOTER */}
           <footer className="pt-6 flex flex-col items-center gap-3 relative z-10">
             <Link
               href="/?opened=true#couple-profile"
@@ -657,7 +765,7 @@ export default function AcaraPage() {
             <div className="flex items-center gap-2 pt-1 opacity-80">
               <span className="w-8 h-[1px] bg-[#F59E0B]" />
               <p className="text-[10px] font-mono text-[#FDE68A] tracking-[0.25em] uppercase">
-                Silvia &amp; Wahyudi
+                Silvia Wulandari &amp; Riyandi Wahyudi
               </p>
               <span className="w-8 h-[1px] bg-[#F59E0B]" />
             </div>
