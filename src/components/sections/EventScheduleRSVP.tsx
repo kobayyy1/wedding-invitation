@@ -185,7 +185,7 @@ export default function EventScheduleRSVP({ onBackToProfile }: EventScheduleRSVP
           <form onSubmit={handleSubmitRSVP} className="space-y-3.5">
             <div>
               <label className="block text-[10.5px] font-mono text-[#08182B] font-bold uppercase mb-1">
-                Nama Tamu
+                Tamu Undangan
               </label>
               <input
                 type="text"

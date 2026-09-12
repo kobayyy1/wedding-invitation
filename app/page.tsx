@@ -20,7 +20,6 @@ function CanvasCrumpleEngine({ onUncrumpled }: { onUncrumpled: () => void }) {
     let animationFrameId: number;
     let hasTriggeredCard = false;
 
-    // Optimasi 1: Kunci DPR maksimal di 1.5 agar enteng di layar HP FHD+
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -29,7 +28,6 @@ function CanvasCrumpleEngine({ onUncrumpled }: { onUncrumpled: () => void }) {
     canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
 
-    // Optimasi 2: Grid 11x15 (ringan di CPU mid-range, siluet kusut tetap tajam)
     const COLS = 11;
     const ROWS = 15;
     const vertices: {
@@ -76,7 +74,6 @@ function CanvasCrumpleEngine({ onUncrumpled }: { onUncrumpled: () => void }) {
       }
     }
 
-    // Partikel bara emas disesuaikan ke 28 butir (dari 55)
     const embers = Array.from({ length: 28 }, () => ({
       vx: (Math.random() - 0.5) * 460,
       vy: (Math.random() - 0.5) * 460,
@@ -563,7 +560,7 @@ export default function Home() {
                           Rangkaian Acara
                         </h3>
                         <p className="text-[10px] font-mono text-[#FDA4AF] tracking-[0.28em] uppercase font-bold pt-0.5">
-                          Silvia &amp; Wahyudi
+                          Silvia Wulandari &amp; Riyandi Wahyudi
                         </p>
                       </div>
 
